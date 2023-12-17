@@ -1,8 +1,7 @@
 #!/usr/bin/env python3 
 
 from argparse import ArgumentParser
-from scapy.all import (
-    send, IP, UDP, DNS, DNSQR, DNSRR)
+from scapy.all import send, IP, UDP, DNS, DNSQR, DNSRR
 
 
 def query():
@@ -36,22 +35,26 @@ def log(type='q'):
     def reply():
         pass
 
-    filename, packet = 'ip_req.bin', query() if type == 'q' else\
-                       'ip_resp.bin', reply()
+    filename, packet = ('ip_req.bin', query()) if type == 'q' else\
+                       ('ip_resp.bin', reply())
     with open(filename, 'wb') as f:
         f.write(bytes(packet))
 
 
 if __name__ == '__main__':
     A = ArgumentParser()
-    a.add_argument('-q', '--query', help='DNS query')
-    a.add_argument('-r', '--reply', help='DNS reply')
-    a.add_argument('-l', '--log', help='Log DNS packets')
+    A.add_argument('-q', '--query', nargs='?', type=bool, default=True, help='DNS query')
+    A.add_argument('-r', '--reply', nargs='?', type=bool, default=False, help='DNS reply')
+    A.add_argument('-l', '--log', nargs='?', type=bool, default=True, help='Log DNS packets')
+    A.add_argument('-s', '--send', nargs='?', type=bool, default=False, help='Send DNS requests')
     args = A.parse_args()
 
-    packet = None
-    packet = query() if args.query else packet
-    packet = reply() if args.reply else packet
-    assert packet, 'DNS packet type not specified'
+    args.query = False if args.reply else args.query # args.reply overrides args.query
+    if not (args.query or args.reply):
+        raise Exception('Invalid usage: Specify DNS request type (query/reply)')
 
-    send(packet, verbose=0)
+    if args.send:
+        send(query() if args.query else reply(), verbose=0)
+
+    if args.log:
+        log('q' if args.query else 'r')
