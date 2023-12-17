@@ -58,6 +58,8 @@ int main()
     name[5] = '\0';
     for (int k=0; k<5; k++)  name[k] = a[rand() % 26];
 
+    printf("name: %s, id: %d\n", name, txn);
+
     //##################################################################
     /* Step 1. Send a DNS request to the targeted local DNS server.
                This will trigger the DNS server to send out DNS queries */
