@@ -36,8 +36,8 @@ def log(type='q'):
     def reply():
         pass
 
-    filename, packet = 'ip.req.bin', query() if type == 'q' else\
-                       'ip.resp.bin', reply()
+    filename, packet = 'ip_req.bin', query() if type == 'q' else\
+                       'ip_resp.bin', reply()
     with open(filename, 'wb') as f:
         f.write(bytes(packet))
 
