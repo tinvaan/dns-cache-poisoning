@@ -185,3 +185,5 @@ In the user's container, we can see that `www.example.com` initially resolves to
 After launching the attack, we see that the same domain now resolves to `1.2.3.5`, which matches the DNS resolution provided by an attacker nameserver (`ns.attacker32.com`)
 ![dig-attacker: example.com](./assets/media/attack.png)
 
+We can see the trail of requests between the user's container and the local DNS server in the below captured wireshark sniff.
+![wireshark output](./assets/media/wireshark.png)
