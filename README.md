@@ -122,6 +122,18 @@ e0c844eaa393   seed-user               "/start.sh"              About a minute a
 
 In order to launch the attack, we must compile the attack binary from the provided [attack.c](./attack.c) source. This in-turn requires us to generate a DNS query and response template binaries, which are generated using the [scapy](https://scapy.net/) library for Python.
 
+Scapy is a powerful Python library that can be used to forge or decode DNS packets and send them over the wire. Below are a couple of examples of using Scapy to send a DNS query and response packets.
+
+1. Send a DNS query packet
+    ![scapy-query-send](./assets/media/dns-query-send.png)
+
+2. Send a DNS reply packet
+    ![scapy-reply-send](./assets/media/dns-reply-send.png)
+
+However, for the Kaminsky attack to work in practice, we need to implement the packet flooding in a low-level language such as C in order for our spoofed replies to be accepted by the victim's local DNS server.
+
+Creating DNS packets in C is fairly non-trivial and we hence leverage the ease of creating DNS packets using Scapy to create a DNS query and response template and use it in our C program to carry out our attack.
+
 ### Create DNS query and response templates
 
 ```bash
