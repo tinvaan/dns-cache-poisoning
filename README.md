@@ -5,6 +5,7 @@ The [DNS cache poisoning lab](https://seedsecuritylabs.org/Labs_20.04/Networking
 See the [task](./assets/task.pdf) outline for more details.
 
 ## Setup
+
 Use the container setup provided [`docker-compose.yml`](./hosts/docker-compose.yml) file in [hosts/](./hosts/) folder. This will spawn 4 machines(containers) corresponding to an attacker, user, local DNS server and the attacker's nameserver.
 
 ```bash
@@ -129,11 +130,12 @@ $ python dns.py --reply true
 This will generate the necessary DNS query and response template binaries (viz. `ip_req.bin` & `ip_resp.bin`)
 
 ### Compile the attack binary
+
 ```bash
 $ gcc attack.c -o attack
 ```
 
-### Drop in to the attacker container.
+### Drop in to the attacker container
 
 ```bash
 $ docker exec -it 8eef9f1214a4 /bin/bash
@@ -149,7 +151,8 @@ root@attacker [/volumes] $ ls
 assets  attack  attack.c  dns.py  examples  hosts  ip_req.bin  ip_resp.bin
 ```
 
-### Execute the attack.
+### Execute the attack
+
 ```bash
 root@attacker [/volumes] $ ./attack
 
@@ -177,13 +180,14 @@ root@attacker [/volumes] $
 ```
 
 ## Results
-The aim of the attack is to modify the DNS resolution of an arbitrary domain (www.example.com in this exercise) to point to a malicious IP provided by an attacker's name server instead.
 
-In the user's container, we can see that `www.example.com` initially resolves to `93.184.216.43`.
+The aim of the attack is to modify the DNS resolution of an arbitrary domain ([www.example.com](http://www.example.com) in this exercise) to point to a malicious IP provided by an attacker's name server instead.
+
+In the user's container, we can see that [www.example.com](http://www.example.com) initially resolves to `93.184.216.43`.
 ![dig-user: example.com](./assets/media/dig-user.png)
 
 After launching the attack, we see that the same domain now resolves to `1.2.3.5`, which matches the DNS resolution provided by an attacker nameserver (`ns.attacker32.com`)
 ![dig-attacker: example.com](./assets/media/attack.png)
 
-We can see the trail of requests between the user's container and the local DNS server in the below captured wireshark sniff.
+We can see the trail of requests between the user's container(`10.9.0.5`) and the local DNS server(`10.9.0.53`) in the below captured wireshark sniff.
 ![wireshark output](./assets/media/wireshark.png)
