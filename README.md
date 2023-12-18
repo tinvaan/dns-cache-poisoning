@@ -152,6 +152,21 @@ assets  attack  attack.c  dns.py  examples  hosts  ip_req.bin  ip_resp.bin
 Execute the attack.
 ```bash
 root@attacker [/volumes] $ ./attack
+
+ip, txn: 898051015, 0
+ip, txn: 897919943, 0
+ip, txn: 898051015, 256
+ip, txn: 897919943, 256
+ip, txn: 898051015, 512
+ip, txn: 897919943, 512
+ip, txn: 898051015, 768
+ip, txn: 897919943, 768
+ip, txn: 898051015, 1024
+ip, txn: 897919943, 1024
+ip, txn: 898051015, 1280
+ip, txn: 897919943, 1280
+ip, txn: 898051015, 1536
+ip, txn: 897919943, 1536
 ...
 ...
 ...
