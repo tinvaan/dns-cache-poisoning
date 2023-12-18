@@ -6,7 +6,7 @@ from scapy.all import send, IP, UDP, DNS, DNSQR, DNSRR
 
 
 def query():
-    ip = IP(dst='10.9.0.53', src='10.9.0.11')
+    ip = IP(dst='10.9.0.53', src='10.9.0.5')
     udp = UDP(dport=53, sport=33333 ,chksum=0)
     dns = DNS(id=0xAAAA, qr=0, qdcount=1,
               ancount=0, nscount=0, arcount=0,
@@ -15,7 +15,7 @@ def query():
 
 def reply():
     domain = "example.com"
-    ip = IP(dst='10.9.0.53', src='10.11.0.9')
+    ip = IP(dst='10.9.0.53', src='10.9.0.5')
     udp = UDP(dport=3333, sport=53, chksum=0)
     dns = DNS(id=0xAAA, aa=1, rd=1, qr=1,
               qdcount=1, ancount=1, nscount=1, arcount=0,
