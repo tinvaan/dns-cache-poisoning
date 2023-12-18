@@ -108,6 +108,7 @@ attacker-ns-10.9.0.153      |  * Starting domain name service... named   [ OK ]
 ```
 
 Check if the 4 containers corresponding to a user, attacker, local DNS server and attacker nameserver are up and running.
+
 ```bash
 $ docker container ls -a
 CONTAINER ID   IMAGE                   COMMAND                  CREATED              STATUS              PORTS     NAMES
@@ -127,6 +128,7 @@ In order to launch the attack, we must compile the attack binary from the provid
 $ python dns.py -ql
 $ python dns.py --reply true
 ```
+
 This will generate the necessary DNS query and response template binaries (viz. `ip_req.bin` & `ip_resp.bin`)
 
 ### Compile the attack binary
@@ -145,6 +147,7 @@ bin  boot  dev	etc  home  lib	lib32  lib64  libx32  media  mnt  opt  proc  root 
 ```
 
 Here, the DNS templates and the attack binary that we just compiled are mounted on the `/volumes` directory in the attcker container.
+
 ```bash
 root@attacker [/] $ cd volumes/
 root@attacker [/volumes] $ ls
@@ -183,11 +186,18 @@ root@attacker [/volumes] $
 
 The aim of the attack is to modify the DNS resolution of an arbitrary domain ([www.example.com](http://www.example.com) in this exercise) to point to a malicious IP provided by an attacker's name server instead.
 
-In the user's container, we can see that [www.example.com](http://www.example.com) initially resolves to `93.184.216.43`.
+Here are the observations on launching our attack.
+
+1. In the user's container, we can see that [www.example.com](http://www.example.com) initially resolves to `93.184.216.43`.
 ![dig-user: example.com](./assets/media/dig-user.png)
 
-After launching the attack, we see that the same domain now resolves to `1.2.3.5`, which matches the DNS resolution provided by an attacker nameserver (`ns.attacker32.com`)
+2. After launching the attack, we can drop into the local DNS container to see if the DNS cache gets updated with the flood of requests caused by our attack.
+![DNS cache](./assets/media/cache.png)
+
+3. We can also see the trail of requests between the user's container(`10.9.0.5`) and the local DNS server(`10.9.0.53`) in the below captured wireshark sniff.
+![wireshark output](./assets/media/wireshark.png)
+
+4. Finally, we can verify that the same domain now resolves to `1.2.3.5`, which matches the DNS resolution provided by an attacker nameserver (`ns.attacker32.com`)
 ![dig-attacker: example.com](./assets/media/attack.png)
 
-We can see the trail of requests between the user's container(`10.9.0.5`) and the local DNS server(`10.9.0.53`) in the below captured wireshark sniff.
-![wireshark output](./assets/media/wireshark.png)
+Hence we conclude that our attack has succeeded in resolving [www.example.com](http://www.example.com) to a malicious IP address.
