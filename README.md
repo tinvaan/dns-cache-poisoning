@@ -177,3 +177,11 @@ root@attacker [/volumes] $
 ```
 
 ## Results
+The aim of the attack is to modify the DNS resolution of an arbitrary domain (www.example.com in this exercise) to point to a malicious IP provided by an attacker's name server instead.
+
+In the user's container, we can see that `www.example.com` initially resolves to `93.184.216.43`.
+![dig-user: example.com](./assets/media/dig-user.png)
+
+After launching the attack, we see that the same domain now resolves to `1.2.3.5`, which matches the DNS resolution provided by an attacker nameserver (`ns.attacker32.com`)
+![dig-attacker: example.com](./assets/media/attack.png)
+
