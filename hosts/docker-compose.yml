@@ -32,7 +32,7 @@ services:
                 - ALL
         privileged: true
         volumes:
-                - ./volumes:..
+                - ..:/volumes
         network_mode: host
 
     attacker_ns:
